@@ -2,6 +2,7 @@ package product.store.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,6 +71,8 @@ public class StoreController implements ServletContextAware {
 		if (productList!= null) {
 			Product product = userService.saveMyProduct(quantity, productId, productName);
 			productList.add(product);
+			session.setAttribute("productList", productList);
+			servletContext.setAttribute("productList", productList);
 			return productList;	
 	
 		}
@@ -109,11 +113,35 @@ public class StoreController implements ServletContextAware {
 		
 	}
 	
-	@PostMapping("/update")
-	public @ResponseBody String update(@RequestParam("productId") String productId,HttpSession session) {
-		servletContext.setAttribute("EditId", productId);
+	@RequestMapping("/update")
+	public @ResponseBody String update(HttpSession session) {
+		//servletContext.setAttribute("EditId", productId);
 		return "update";
 
 		
 	}
+	
+	@RequestMapping("/save")
+	public String save() {
+			return "saveChanges";
+	}
+	
+	@PostMapping("/deleteProduct")
+	public @ResponseBody List<Product> deleteProduct(@RequestParam("productId") String productid,HttpSession session) {
+		
+		List<Product> productList = (List<Product>) servletContext.getAttribute("productList");
+		ListIterator<Product> iterator = productList.listIterator();
+		while(iterator.hasNext()) {
+			if(iterator.next().getProductId().equals(productid)) {
+				iterator.remove();
+				break;
+			}
+		}
+
+		session.setAttribute("productList", productList);
+		servletContext.setAttribute("productList", productList);
+		return productList;
+		}
+	
+
 }

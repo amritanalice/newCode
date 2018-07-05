@@ -55,6 +55,7 @@ function showAllProduct(){
 <h2><a href="/addProduct">Add a product</a></h2>
 <h2><a href="/updateProduct">Update a product</a></h2>
 <h2><a href="/deleteProduct">Delete a product</a></h2>
+<h2><a href="/save">Testing</a></h2>
 <h3>Product Details</h3>
 <hr size="4" color="gray"/>
  <form action="" method="post"  accept-charset="utf-8"

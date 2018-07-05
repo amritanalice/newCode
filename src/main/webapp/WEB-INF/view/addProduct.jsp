@@ -169,11 +169,12 @@ function showAllProduct(){
 		type: "POST",
 		url: "/showAllProduct",
 		success: function(data){
-
+			
 			var html = '';
 			var i;
 			for(i=0; i<data.length; i++){
-			
+				sessionStorage.setItem("id", data[i].productId);
+			   var id = data[i].productId;
 				html +='<tr>'+
 							'<td>'+data[i].quantity+'</td>'+
 							'<td>'+data[i].productId+'</td>'+
@@ -182,6 +183,7 @@ function showAllProduct(){
 								'<a href="javascript:;" class="btn btn-info item-edit" data="'+data[i].productId+'">Edit</a>'+
 								'    '+
 								'<a href="javascript:;" class="btn btn-danger item-delete" data="'+data[i].productId+'">Delete</a>'+
+								"<td > <input class='center available' value="+ "Update Product"+" onclick=performUpdate('update','"+data[i].productId+"')></td>"+
 							'</tr>';
 			}
 			$('#showdata').html(html);
@@ -209,6 +211,95 @@ function showAllProduct(){
 			}
 		});
 	});
+	
+	$('#showdata').on('click', '.item-delete', function(){
+		
+		var id = $(this).attr('data');
+		//$('#deleteModal').modal('show');
+		//prevent previous handler - unbind()
+		//var id = sessionStorage.getItem("id");
+		
+			$.ajax({
+				type: 'ajax',
+				method: 'post',
+				url: 'deleteProduct',
+				data:{productId:id},
+				
+				success: function(response){
+					alert('got a response');
+						showAllProd();
+					
+				},
+				error: function(){
+					alert('Error deleting');
+				}
+			});
+		
+	});
+}
+
+function showAllProd(){
+	$.ajax({
+		type: "POST",
+		url: "/showAllProduct",
+		success: function(data){
+
+			var html = '';
+			var i;
+			for(i=0; i<data.length; i++){
+			   var id = data[i].productId;
+				html +='<tr>'+
+							'<td>'+data[i].quantity+'</td>'+
+							'<td>'+data[i].productId+'</td>'+
+							'<td>'+data[i].productName+'</td>'+
+							'<td>'+
+								'<a href="javascript:;" class="btn btn-info item-edit" data="'+data[i].productId+'">Edit</a>'+
+								'    '+
+								'<a href="javascript:;" class="btn btn-danger item-delete" data="'+data[i].productId+'">Delete</a>'+
+								"<td > <input class='center available' value="+ "Update Product"+" onclick=performUpdate('update','"+data[i].productId+"')></td>"+
+							'</tr>';
+			}
+			$('#showdata').html(html);
+		},
+		error: function(){
+			alert('Could not get Data from Database');
+		}
+	});
+}
+
+
+function performUpdate(operation,productId){
+	console.log('performOperation='+operation+',Product Id='+productId);
+	var productid = $(productId); 
+	
+		$.ajax({
+			url: "update",
+			type: "POST",
+			data:"productId="+productid,
+				
+
+				success: function(data, textStatus, jqXHR) {
+					console.log(data);
+					window.open('/update');
+					//var parsed = data;
+					//parsed = JSON.parse(parsed);
+					//console.log("Parsed="+parsed.productJSON[0].quantity);
+
+					//constructDataGrid(parsed);
+
+
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					console.log("Something really bad happened " + textStatus +"\n"+jqXHR.responseText);
+
+				}
+
+		}).done(function( e ) {
+			console.log( "word was saved" + e );
+		});
+	
+	
+
 }
 </script>
 <body>
@@ -288,6 +379,8 @@ function showAllProduct(){
 
          </form>
      </div>
+     
+    
 <h2><a href="/backHome">Back to Admin Home Page</a></h2>
 </body>
 </html>
