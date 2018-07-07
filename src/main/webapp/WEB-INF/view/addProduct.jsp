@@ -180,10 +180,13 @@ function showAllProduct(){
 							'<td>'+data[i].productId+'</td>'+
 							'<td>'+data[i].productName+'</td>'+
 							'<td>'+
-								'<a href="javascript:;" class="btn btn-info item-edit" data="'+data[i].productId+'">Edit</a>'+
-								'    '+
-								'<a href="javascript:;" class="btn btn-danger item-delete" data="'+data[i].productId+'">Delete</a>'+
-								"<td > <input class='center available' value="+ "Update Product"+" onclick=performUpdate('update','"+data[i].productId+"')></td>"+
+							"<td > <input  type='button' value='Update here' onclick=performOperation('update','"
+							+data[i].quantity+"','"
+							+data[i].productId+"','"
+							+data[i].productName+"')></td>"+
+								'    '+"<td>"+
+								'<a href="javascript:;" class="btn btn-danger item-delete" data="'+data[i].productId+'">Delete</a>'+"</td>"+
+								
 							'</tr>';
 			}
 			$('#showdata').html(html);
@@ -268,36 +271,8 @@ function showAllProd(){
 }
 
 
-function performUpdate(operation,productId){
-	console.log('performOperation='+operation+',Product Id='+productId);
-	var productid = $(productId); 
-	
-		$.ajax({
-			url: "update",
-			type: "POST",
-			data:"productId="+productid,
-				
-
-				success: function(data, textStatus, jqXHR) {
-					console.log(data);
-					window.open('/update');
-					//var parsed = data;
-					//parsed = JSON.parse(parsed);
-					//console.log("Parsed="+parsed.productJSON[0].quantity);
-
-					//constructDataGrid(parsed);
-
-
-				},
-				error: function(jqXHR, textStatus, errorThrown){
-					console.log("Something really bad happened " + textStatus +"\n"+jqXHR.responseText);
-
-				}
-
-		}).done(function( e ) {
-			console.log( "word was saved" + e );
-		});
-	
+function performOperation(operation,quantity,productId,productName){
+	window.open('/update?quantity='+quantity+"&productId="+productId+"&productName="+productName);
 	
 
 }

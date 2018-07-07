@@ -113,18 +113,48 @@ public class StoreController implements ServletContextAware {
 		
 	}
 	
-	@RequestMapping("/update")
+/*	@RequestMapping("/update")
 	public @ResponseBody String update(HttpSession session) {
 		//servletContext.setAttribute("EditId", productId);
 		return "update";
 
 		
+	}*/
+	
+	@RequestMapping("/update")
+	public String update(@RequestParam("quantity") String quantity,@RequestParam("productId") String productId,@RequestParam("productName") String productName,HttpSession session,HttpServletRequest request){
+		String prodname = (String) session.getAttribute("productname");
+		//request.setAttribute("productName", productName);
+		//request.setAttribute("productId", productId);
+		//request.setAttribute("quantity", quantity);
+		session.setAttribute("productName", productName);
+		session.setAttribute("productId", productId);
+		session.setAttribute("quantity", quantity);
+		Product updProd = userService.saveMyProduct(quantity, productId, productName);
+		session.setAttribute("product", updProd);
+		session.setAttribute("quantity", quantity);
+		return  "UpdateProduct";
 	}
 	
 	@RequestMapping("/save")
-	public String save() {
-			return "saveChanges";
-	}
+	public List<Product> save(@RequestParam("quantity") String quantity,@RequestParam("productId") String productId,@RequestParam("productName") String productName,HttpSession session,HttpServletRequest request) {
+		
+		List<Product> productList = (List<Product>) servletContext.getAttribute("productList");
+		ListIterator<Product> iterator = productList.listIterator();
+		while(iterator.hasNext()) {
+			if(iterator.next().getProductId().equals(productId)) {
+				Product newProd = iterator.next();
+				newProd.setProductName(productName);
+				newProd.setQuantity(quantity);
+				break;
+			}
+		}
+
+		session.setAttribute("productList", productList);
+		servletContext.setAttribute("productList", productList);
+		return productList;
+		}
+	
 	
 	@PostMapping("/deleteProduct")
 	public @ResponseBody List<Product> deleteProduct(@RequestParam("productId") String productid,HttpSession session) {
